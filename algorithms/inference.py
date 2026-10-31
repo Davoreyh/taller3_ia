@@ -29,13 +29,13 @@ def enumeration_ask(network, query: str, evidence: dict) -> dict:
         return 1.0
       var = network.variables[i]
       if var in event:
-        return network.probability(var, event[var], event)* recursive_enumerate(i+1, event)
+        return network.probability(var, event[var], event)* recursive_enumerate(network, i+1, event)
       else:
         result = 0
         for j in range(2):
           new_event = event.copy()
           new_event[var] = j
-          result += network.probability(var, j, event)*recursive_enumerate(i+1, new_event)
+          result += network.probability(var, j, event)*recursive_enumerate(network, i+1, new_event)
         return result
       
     possible_evidence = recursive_enumerate(network, 0, evidence)
@@ -54,5 +54,5 @@ def enumeration_ask(network, query: str, evidence: dict) -> dict:
         new_evidence = evidence.copy()
         new_evidence[query] = k
         results[k] = recursive_enumerate(network, 0, new_evidence)
-    return results
+    return normalize(results)
     # FIN DEL BLOQUE DEL ESTUDIANTE
