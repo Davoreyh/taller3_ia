@@ -13,7 +13,21 @@ def normalize(weights: dict) -> dict:
     - Rechace pesos negativos, no finitos, diccionarios vacíos y suma cero.
     """
     # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    probability = {}
+    total_weight = 0
+    for result in weights:
+        value = weights[result]
+        if not math.isfinite(value) or value < 0:
+            raise Exception("Papi el valor es inválido")
+        total_weight += value
+    
+    if total_weight == 0:
+        raise Exception("Papi no hay datos")
+    
+    for result in weights:
+        probability[result] = weights[result]/total_weight
+    
+    return probability
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
