@@ -75,5 +75,12 @@ def best_action(distribution: dict, actions: dict) -> tuple[str, dict]:
     if not actions:
         raise ValueError("Se requiere al menos una acción")
     # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    final_utilities = {}
+    best_action = None
+    for action in actions:
+        action_util = expected_utility(distribution, actions[action])
+        final_utilities[action] = action_util
+        if best_action is None or action_util > final_utilities[best_action]:
+            best_action = action
+    return best_action, final_utilities
     # FIN DEL BLOQUE DEL ESTUDIANTE
