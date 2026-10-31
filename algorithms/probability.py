@@ -18,11 +18,11 @@ def normalize(weights: dict) -> dict:
     for result in weights:
         value = weights[result]
         if not math.isfinite(value) or value < 0:
-            raise Exception("Papi el valor es inválido")
+            raise ValueError("Papi el valor es inválido")
         total_weight += value
     
     if total_weight == 0:
-        raise Exception("Papi no hay datos")
+        raise ValueError("Papi no hay datos")
     
     for result in weights:
         probability[result] = weights[result]/total_weight
