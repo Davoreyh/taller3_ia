@@ -1,7 +1,6 @@
 """Punto 2. Inferencia exacta por enumeración."""
 from algorithms.probability import normalize
 
-
 def enumeration_ask(network, query: str, evidence: dict) -> dict:
     """Calcula P(query | evidence) sobre la conjunta factorizada.
 
@@ -25,38 +24,35 @@ def enumeration_ask(network, query: str, evidence: dict) -> dict:
     network.validate_query(query, evidence)
 
     # TODO: Add your code here
-    def enumerate_all(variables, event):
-        if not variables:
-            return 1.0
-        v = variables[0]
-        rest = variables[1:]
-        if v in event:
-            p = network.probability(v, event[v], event)
-            return p * enumerate_all(rest, event)
-        else:
-            total = 0.0
-            for val in (0, 1):
-                extended = dict(event)
-                extended[v] = val
-                p = network.probability(v, val, extended)
-                total += p * enumerate_all(rest, extended)
-            return total
-
+    def recursive_enumerate(network, i: int, event: dict)-> float:
+      if i == len(network.variables):
+        return 1.0
+      var = network.variables[i]
+      if var in event:
+        return network.probability(var, event[var], event)* recursive_enumerate(network, i+1, event)
+      else:
+        result = 0
+        for j in range(2):
+          new_event = event.copy()
+          new_event[var] = j
+          result += network.probability(var, j, event)*recursive_enumerate(network, i+1, new_event)
+        return result
+      
+    possible_evidence = recursive_enumerate(network, 0, evidence)
+    if not possible_evidence:
+      raise ValueError("La evidencia es imposible")
+    results = {}
     if query in evidence:
-        p_evidence = enumerate_all(network.variables, dict(evidence))
-        if p_evidence == 0.0:
-            raise ValueError("Evidencia imposible")
-        val = evidence[query]
-        return {val: 1.0, 1 - val: 0.0}
-
-    distribution = {}
-    for val in (0, 1):
-        extended = dict(evidence)
-        extended[query] = val
-        distribution[val] = enumerate_all(network.variables, extended)
-
-    if sum(distribution.values()) == 0.0:
-        raise ValueError("Evidencia imposible")
-
-    return normalize(distribution)
+      if evidence[query] == 0:
+        results[0] = 1.0
+        results[1] = 0.0
+      else:
+        results[0] = 0.0
+        results[1] = 1.0
+    else:
+      for k in range(2):
+        new_evidence = evidence.copy()
+        new_evidence[query] = k
+        results[k] = recursive_enumerate(network, 0, new_evidence)
+    return normalize(results)
     # FIN DEL BLOQUE DEL ESTUDIANTE
