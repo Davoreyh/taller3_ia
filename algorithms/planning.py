@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import math
 
 
+
 @dataclass
 class PlanningResult:
     """Valores e historial; no modificar."""
@@ -24,8 +25,15 @@ def action_value(mdp, state, action, values):
     - No vuelva a sumar la recompensa del terminal en su valor:
       values[terminal] es cero.
     """
-    # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    # TODO: Add your code here: DONE
+    
+    
+    total = 0 
+    for sucesor, probabilidad in mdp.transitions(state, action):
+        total += probabilidad*(mdp.reward(state, action, sucesor) + mdp.discount*values[sucesor])
+    return total
+        
+
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
@@ -53,8 +61,35 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
     values = dict.fromkeys(mdp.states, 0.0)
     history, deltas = [values.copy()], []
     for _ in range(max_iterations):
-        # TODO: Add your code here
-        raise NotImplementedError("Complete este bloque TODO")
+        # TODO: Add your code here: DONE
+        new_values = {}
+        delta = 0.0
+
+        for state in mdp.states:
+            actions = mdp.actions(state)
+
+            if not actions:
+                new_values[state] = 0.0
+            else:
+                best_value = float("-inf")
+
+                for action in actions:
+                    q_value = action_value(mdp, state, action, values)
+
+                    if q_value > best_value:
+                        best_value = q_value
+
+                new_values[state] = best_value
+
+            difference = abs(new_values[state] - values[state])
+
+            if difference > delta:
+                delta = difference
+
+        values = new_values
+        converged = delta < tolerance
+       
+       
         # FIN DEL BLOQUE DEL ESTUDIANTE
         # Copias para la animación y empaquetado del resultado.
         history.append(values.copy())
