@@ -52,7 +52,11 @@ def expected_utility(distribution: dict, utilities: dict) -> float:
     if any(not math.isfinite(u) for u in utilities.values()):
         raise ValueError("Utilidades no finitas")
     # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    final_util = 0
+    for result in distribution:
+        final_util += distribution[result]*utilities[result]
+    
+    return final_util
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
