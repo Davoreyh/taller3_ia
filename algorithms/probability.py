@@ -13,20 +13,22 @@ def normalize(weights: dict) -> dict:
     - Rechace pesos negativos, no finitos, diccionarios vacíos y suma cero.
     """
     # TODO: Add your code here
+    if not weights:
+        raise ValueError("Diccionario de pesos vacío")
     probability = {}
     total_weight = 0
     for result in weights:
         value = weights[result]
         if not math.isfinite(value) or value < 0:
-            raise Exception("Papi el valor es inválido")
+            raise ValueError(f"Peso inválido para {result}: {value}")
         total_weight += value
-    
+
     if total_weight == 0:
-        raise Exception("Papi no hay datos")
-    
+        raise ValueError("La suma de pesos es cero")
+
     for result in weights:
-        probability[result] = weights[result]/total_weight
-    
+        probability[result] = weights[result] / total_weight
+
     return probability
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
@@ -55,7 +57,7 @@ def expected_utility(distribution: dict, utilities: dict) -> float:
     final_util = 0
     for result in distribution:
         final_util += distribution[result]*utilities[result]
-    
+
     return final_util
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
